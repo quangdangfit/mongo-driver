@@ -8,8 +8,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"transport/lib/utils/logger"
 )
 
 type DBConfig struct {
@@ -38,7 +36,6 @@ func (db *MongoClient) Connect(config DBConfig) error {
 	client, err := mongo.NewClient(options.Client().ApplyURI(connectionURI))
 
 	if err != nil {
-		logger.Error("Cannot connect MongoDB: ", err)
 		return err
 	}
 
@@ -46,7 +43,6 @@ func (db *MongoClient) Connect(config DBConfig) error {
 	defer cancel()
 	err = client.Connect(ctx)
 	if err != nil {
-		logger.Error("Cannot connect MongoDB: ", err)
 		return err
 	}
 	db.client = client
@@ -65,9 +61,7 @@ func (db *MongoClient) CreateIndex(database string, collection string, indexMode
 	_, err := c.Indexes().CreateOne(context.Background(), indexModel, opts)
 
 	if err != nil {
-		logger.Error("[CreateIndex] ERROR: ", err)
 	} else {
-		logger.Info("[CreateIndex] Successfully create index")
 	}
 }
 
@@ -76,9 +70,7 @@ func (db *MongoClient) DropIndex(client *mongo.Client, database string, collecti
 	opts := options.DropIndexes().SetMaxTime(OperationTimeOut * time.Second)
 	_, err := c.Indexes().DropOne(context.Background(), indexName, opts)
 	if err != nil {
-		logger.Error("[DropIndex] ERROR: ", err)
 	} else {
-		logger.Info("[DropIndex] Successfully drop index")
 	}
 }
 
